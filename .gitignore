@@ -3,3 +3,5 @@ node_modules/
 dist/
 build/
 .next/
+# Fuentes de prueba (licencia de evaluación): no subir ni publicar
+public/fonts/trial/

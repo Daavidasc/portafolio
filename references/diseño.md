@@ -22,7 +22,7 @@ Principios principales:
 
 | Token | Valor | Uso |
 | --- | --- | --- |
-| `--color-accent` | `#ff5638` | Focos, detalles activos, subrayados, indicadores, bullets y barras decorativas puntuales. |
+| `--color-accent` | `#ff5638` (oscuro) / `#c8381a` (claro, para contraste AA) | Focos, detalles activos, subrayados, indicadores, bullets y barras decorativas puntuales. |
 
 El acento debe usarse con moderación. No debe convertirse en color dominante.
 
@@ -56,35 +56,22 @@ El acento debe usarse con moderación. No debe convertirse en color dominante.
 
 ## Tipografía
 
-El sistema usa máximo dos familias tipográficas.
+Dos familias, autoalojadas: **Mona Sans** (sans, GitHub, licencia SIL OFL; `public/fonts/Mona-Sans.woff2`, variable en peso 200–900 y ancho 75–125%, con precarga en `index.html`) y **Brier** (serif de acento, **versión de prueba**: `public/fonts/trial/`, ignorada por git; requiere licencia web antes de publicar). Bodoni Moda queda solo como respaldo y para la firma, que necesita cursiva real. No hay tercera familia: los datos usan Mona Sans con cifras tabulares (`--font-mono` es un alias de `--font-sans`). Hay una fuente de respaldo con `size-adjust: 96%` para evitar saltos de layout.
 
-| Token | Familia | Uso |
-| --- | --- | --- |
-| `--font-sans` | `Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif` | Títulos principales, cuerpo de texto y contenido editorial. |
-| `--font-mono` | `"IBM Plex Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace` | Navegación, etiquetas, metadatos, fechas, categorías y textos técnicos breves. |
-
-Nota: las fuentes están declaradas como pila tipográfica. Si Inter o IBM Plex Mono no están disponibles en el sistema, se usan los fallbacks.
-
-### Escala tipográfica principal
-
-| Elemento | Tamaño actual | Estilo |
-| --- | --- | --- |
-| Nombre Hero | `clamp(4.5rem, 15.5vw, 13.5rem)` | Sans, peso 700, uppercase, `line-height: 0.8`. |
-| Nombre Hero móvil | `clamp(4.35rem, 21vw, 7.75rem)` | Sans, peso 700, cada palabra en línea propia. |
-| Títulos de sección | Entre `clamp(2.8rem, 14vw, 4.5rem)` y `clamp(3rem, 8vw, 7.2rem)` | Sans, peso 700, compacto, editorial. |
-| Texto de cuerpo | `1rem` aprox. | Sans, `line-height` entre `1.65` y `1.75`. |
-| Metadatos | `0.72rem` a `0.78rem` | Mono, uppercase. |
-| Navegación | `0.75rem` | Mono, uppercase. |
-| Skills flotantes | `clamp(0.9rem, 2.35vw, 1.55rem)` desktop; menor en móvil | Mono, uppercase. |
+| Estilo | Fuente | Ancho | Peso | Otros |
+| --- | --- | --- | --- | --- |
+| `.display` (títulos de sección, menú, marquesina, frase del footer) | Mona Sans | 93% | 660 | mayúsculas, `line-height` 0.9, `letter-spacing` -0.01em |
+| `.name` (SERRUDO) | Mona Sans | 93% | 850 | `line-height` 0.85, `letter-spacing` +0.012em (con -0.02em las R se tocan con RR y RU) |
+| `.serif-accent` (segunda línea de títulos, palabras clave de "Sobre mí") | Brier | — | 400 | color `--color-accent` |
+| Cuerpo | Mona Sans | 100% | 400 | 18–20px, `line-height` 1.5 |
+| Etiquetas | Mona Sans | — | 500 | 13–15px, `letter-spacing` 0.01em, color atenuado |
+| Botones (CV, EN/ES) | Mona Sans | 93% | 600 | mayúsculas |
 
 ### Reglas tipográficas
 
-- No usar `letter-spacing` negativo.
-- Mantener `letter-spacing: 0`.
-- Los títulos deben tener líneas compactas, entre `0.8` y `0.9`.
-- El texto largo debe permanecer sobrio y legible, sin bloques extensos innecesarios.
-- Los metadatos técnicos van en mono y uppercase.
-- Los títulos de Proyectos, About y Experiencia deben sentirse parte del mismo sistema que el Hero.
+- Palabras destacadas en "Sobre mí": serif + acento, máximo 2–3 palabras por párrafo.
+- La serif solo en el logo, "David", la segunda línea de los títulos, los números del menú y las palabras clave.
+- Los titulares usan `clamp()` y no deben desbordar desde 320px.
 
 ## Espaciado y layout
 
@@ -92,8 +79,8 @@ Nota: las fuentes están declaradas como pila tipográfica. Si Inter o IBM Plex 
 
 | Token | Valor | Uso |
 | --- | --- | --- |
-| `--layout-max` | `86rem` | Ancho máximo del contenido. |
-| `--space-page` | `clamp(1rem, 3.5vw, 4rem)` | Padding lateral global responsive. |
+| `--layout-max` | `100%` | Ancho máximo del contenido. |
+| `--space-page` | `clamp(1rem, 2.5vw, 2.5rem)` | Padding lateral global responsive. |
 
 ### Reglas de composición
 
@@ -127,7 +114,7 @@ El diseño evita cards redondeadas como recurso principal. Las formas se usan de
 ### Imágenes
 
 - About usa una fotografía personal con proporción `4 / 5`.
-- Proyectos usa imágenes placeholder con proporción `16 / 9`.
+- Proyectos usa imágenes placeholder (pendientes de reemplazo) con proporción `16 / 9`.
 - Las imágenes deben ser claras y funcionales, no puramente decorativas.
 - Las figuras no usan esquinas redondeadas ni marcos pesados.
 
@@ -245,9 +232,9 @@ Características:
 
 Reglas:
 
-- Los proyectos actuales son placeholders claramente marcados.
+- Los proyectos (EmotionGestureApp, ViviEstu, KeplerX) provienen del CV; las imágenes siguen siendo placeholders temporales.
 - No inventar información real.
-- Cuando se reemplacen, mantener imagen, nombre, categoría, año y estado/enlace si corresponde.
+- Al reemplazar las imágenes, mantener nombre, categoría, año, estado y enlace (`href`, opcional) si corresponde.
 
 ### Experience
 
@@ -400,3 +387,17 @@ Antes de agregar o modificar una sección:
 8. Confirmar que no existe overflow horizontal.
 9. Verificar navegación por teclado y foco visible.
 10. Ejecutar `npm run lint` y `npm run build` después de cambios importantes.
+
+## Navegación, menú y movimiento
+
+- Header: logo en dos líneas (David serif / SERRUDO sans), botón CV con acento y botón hamburguesa. Se oculta al bajar y reaparece al subir. No hay links centrados.
+- Menú: overlay a pantalla completa (`clip-path`), foco atrapado, `Esc` para cerrar, scroll bloqueado. Contiene el toggle de tema.
+- Scroll suave con Lenis y revelados con GSAP + ScrollTrigger (`src/lib/motion.ts`). Todo se desactiva con `prefers-reduced-motion`.
+- Loader de ~1 s, cursor circular (solo mouse) y manchas "gooey" (`Blobs`) con versión estática en táctil o movimiento reducido.
+- Experiencia: tabla por grupos; la vista previa con imagen sigue al cursor solo en el eje vertical, en una columna libre a la derecha (≥1200px) para no cubrir texto.
+
+## Idioma (EN / ES)
+
+- Inglés por defecto; el español se activa con el toggle del header (guardado en `localStorage`, y actualiza `<html lang>`, el título y la descripción).
+- Contenido en `src/data/profile.en.ts` y `src/data/profile.es.ts` (misma forma de datos), proyectos en `src/data/projects.ts` (texto por idioma) y textos de interfaz en `src/data/ui.ts`.
+- Los componentes leen todo con `useLang()` (`src/i18n/`). Al agregar texto nuevo, agregarlo en ambos idiomas.

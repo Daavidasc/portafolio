@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Karate Panamericano</title>
+    <link rel="stylesheet" href="../vendor/xterm.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #000;
+        color: #d4d4d4;
+        font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+        font-size: 13px;
+      }
+
+      .app {
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+      }
+
+      .bar {
+        display: flex;
+        min-height: 36px;
+        flex: none;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 3px 10px;
+        border-bottom: 1px solid #262626;
+      }
+
+      .bar__status {
+        overflow: hidden;
+        color: #8a8a8a;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .bar__actions {
+        display: flex;
+        flex: none;
+        gap: 8px;
+      }
+
+      button {
+        padding: 5px 12px;
+        border: 1px solid #3a3a3a;
+        border-radius: 4px;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      button:hover,
+      button:focus-visible {
+        border-color: #ff5638;
+        color: #ff5638;
+        outline: none;
+      }
+
+      .stage {
+        display: flex;
+        min-height: 0;
+        flex: 1;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      #terminal {
+        flex: none;
+      }
+
+      /* Incrustado en el portafolio, los controles viven en la ventana emergente. */
+      .is-embedded .bar {
+        display: none;
+      }
+
+      .hint {
+        display: none;
+        color: #ff5638;
+      }
+
+      .hint.is-visible {
+        display: inline;
+      }
+
+      /* Con el aviso visible, el texto de estado no compite por el espacio. */
+      .hint.is-visible + #status {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="bar">
+        <span class="bar__status"
+          ><span class="hint" id="hint">Mejor en computador</span
+          ><span id="status">Cargando…</span></span
+        >
+        <div class="bar__actions">
+          <button type="button" id="fullscreen">Pantalla completa</button>
+          <button type="button" id="restart">Reiniciar</button>
+        </div>
+      </div>
+      <div class="stage" id="stage">
+        <div id="terminal" aria-label="Karate Panamericano"></div>
+      </div>
+    </div>
+
+    <script src="../vendor/xterm.js"></script>
+    <script src="../vendor/addon-webgl.js"></script>
+    <script src="karate.js"></script>
+    <script>
+      (() => {
+        const COLS = 190;
+        const ROWS = 45;
+        const FONT_FAMILY =
+          '"Cascadia Mono", Consolas, "DejaVu Sans Mono", "Liberation Mono", Menlo, monospace';
+
+        if (window.self !== window.top) {
+          document.body.classList.add('is-embedded');
+        }
+
+        const stage = document.getElementById('stage');
+        const status = document.getElementById('status');
+        const hint = document.getElementById('hint');
+
+        // Teclado: cola de códigos que lee la capa de compatibilidad (kbhit/getch).
+        window.karateKeys = [];
+        window.karateWrite = () => {};
+
+        if (window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 640) {
+          hint.classList.add('is-visible');
+        }
+
+        const term = new Terminal({
+          cols: COLS,
+          rows: ROWS,
+          scrollback: 0,
+          convertEol: true,
+          disableStdin: true,
+          cursorBlink: false,
+          cursorInactiveStyle: 'none',
+          allowProposedApi: true,
+          fontFamily: FONT_FAMILY,
+          fontSize: 12,
+          lineHeight: 1,
+          // `black` es el color 0 de la paleta que usa el juego como fondo; por defecto xterm lo pinta gris (#2e3436).
+          theme: { background: '#000000', foreground: '#c0c0c0', cursor: '#000000', black: '#000000' },
+        });
+
+        term.open(document.getElementById('terminal'));
+
+        try {
+          const webgl = new WebglAddon.WebglAddon();
+
+          webgl.onContextLoss(() => webgl.dispose());
+          term.loadAddon(webgl);
+        } catch {
+          // Sin WebGL queda el renderizador DOM, más lento pero válido.
+        }
+
+        window.karateWrite = (text) => term.write(text);
+
+        // Tamaño de fuente: el mayor (en pasos de 0,25 px) con el que las 190 columnas y las 45 filas caben
+        // en el espacio libre. Los pasos finos evitan que sobre un margen de hasta ~10 % con tamaños enteros.
+        const fit = () => {
+          const availableWidth = stage.clientWidth;
+          const availableHeight = stage.clientHeight;
+          const screen = term.element.querySelector('.xterm-screen');
+          let size = Math.max(
+            5,
+            Math.min(40, Math.ceil((availableWidth / COLS) * 1.75 * 4) / 4),
+          );
+
+          for (let i = 0; i < 160; i += 1) {
+            term.options.fontSize = size;
+
+            if (
+              size <= 5 ||
+              (screen.offsetWidth <= availableWidth && screen.offsetHeight <= availableHeight)
+            ) {
+              break;
+            }
+
+            size -= 0.25;
+          }
+        };
+
+        let fitTimer = 0;
+        const scheduleFit = () => {
+          window.clearTimeout(fitTimer);
+          fitTimer = window.setTimeout(fit, 60);
+        };
+
+        fit();
+        window.addEventListener('resize', scheduleFit);
+        document.addEventListener('fullscreenchange', scheduleFit);
+
+        // Teclas: las flechas, la barra espaciadora y Retroceso no deben desplazar la página.
+        const KEY_CODES = { Enter: 13, Backspace: 8 };
+        const BLOCKED = new Set([' ', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageUp', 'PageDown', 'Home', 'End']);
+
+        const handleKey = (event) => {
+          if (event.ctrlKey || event.metaKey || event.altKey) {
+            return;
+          }
+
+          if (BLOCKED.has(event.key) || event.key in KEY_CODES) {
+            event.preventDefault();
+          }
+
+          const code = event.key in KEY_CODES ? KEY_CODES[event.key] : event.key.length === 1 ? event.key.charCodeAt(0) : 0;
+
+          if (code && window.karateKeys.length < 64) {
+            window.karateKeys.push(code);
+          }
+        };
+
+        // Disponible también para el portafolio: si el foco no está en el juego, reenvía las teclas aquí.
+        window.karatePushKey = handleKey;
+        document.addEventListener('keydown', handleKey);
+
+        window.addEventListener('click', () => window.focus());
+        window.focus();
+
+        document.getElementById('restart').addEventListener('click', () => window.location.reload());
+        document.getElementById('fullscreen').addEventListener('click', () => {
+          if (document.fullscreenElement) {
+            document.exitFullscreen();
+          } else {
+            document.documentElement.requestFullscreen?.().catch(() => {});
+          }
+        });
+
+        if (window.location.hash === '#debug') {
+          window.karateTerm = term;
+        }
+
+        createKarate({
+          locateFile: (path) => path,
+          onExit: () => {
+            status.textContent = 'Partida terminada. Pulsa Reiniciar para jugar otra vez.';
+          },
+        }).then(() => {
+          status.textContent = 'Menús: número + Enter · Combate: 1 o 2';
+        });
+      })();
+    </script>
+  </body>
+</html>

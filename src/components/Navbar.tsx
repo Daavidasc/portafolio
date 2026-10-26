@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
-import { profile } from '../data/profile';
+import { useEffect, useRef, useState } from 'react';
 import type { Theme } from '../hooks/useTheme';
-import { ThemeToggle } from './ThemeToggle';
+import { useLang } from '../i18n/useLang';
+import { LangToggle } from './LangToggle';
+import { Menu } from './Menu';
 
 type NavbarProps = {
   theme: Theme;
@@ -9,90 +10,76 @@ type NavbarProps = {
 };
 
 export const Navbar = ({ theme, onToggleTheme }: NavbarProps) => {
+  const { ui } = useLang();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const [isAtTop, setIsAtTop] = useState(() => window.scrollY < 80);
+  const toggleRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (!isMenuOpen) {
-      return;
-    }
+    let lastY = window.scrollY;
 
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsMenuOpen(false);
-      }
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+
+      setIsHidden(currentY > 120 && currentY > lastY);
+      setIsAtTop(currentY < 80);
+      lastY = currentY;
     };
 
-    window.addEventListener('keydown', handleEscape);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
-    return () => {
-      window.removeEventListener('keydown', handleEscape);
-    };
-  }, [isMenuOpen]);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const closeMenu = () => {
     setIsMenuOpen(false);
+    toggleRef.current?.focus();
   };
 
   return (
-    <header className="fixed inset-x-0 top-0 z-30 border-b border-[var(--color-line)] bg-[color-mix(in_srgb,var(--color-bg)_88%,transparent)] backdrop-blur-md">
-      <nav
-        className="relative mx-auto flex min-h-16 w-full max-w-[var(--layout-max)] items-center justify-between px-[var(--space-page)]"
-        aria-label="Navegacion principal"
+    <>
+      <header
+        className={`site-header${isHidden && !isMenuOpen ? ' is-hidden' : ''}${isAtTop ? '' : ' is-scrolled'}`}
       >
-        <a
-          className="font-mono text-xs uppercase tracking-normal text-[var(--color-text)] outline-none transition-colors hover:text-[var(--color-accent)] focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--color-bg)]"
-          href="#inicio"
-        >
-          DS
-        </a>
-
-        <div className="navbar-links navbar-links--desktop">
-          {profile.navItems.map((item) => (
-            <a
-              className="navbar-link"
-              href={item.href}
-              key={item.href}
-            >
-              {item.label}
-            </a>
-          ))}
-        </div>
-
-        <div className="navbar-actions">
-          <button
-            aria-controls="mobile-navigation"
-            aria-expanded={isMenuOpen}
-            aria-label={isMenuOpen ? 'Cerrar menu' : 'Abrir menu'}
-            className="menu-toggle"
-            onClick={() => {
-              setIsMenuOpen((currentValue) => !currentValue);
-            }}
-            type="button"
+        <nav className="site-header__bar" aria-label={ui.mainNav}>
+          <a
+            aria-hidden={isAtTop || undefined}
+            aria-label={ui.logoLabel}
+            className={`logo${isAtTop ? ' is-hidden' : ''}`}
+            href="#inicio"
+            tabIndex={isAtTop ? -1 : undefined}
           >
-            <span aria-hidden="true" />
-            <span aria-hidden="true" />
-          </button>
+            <span className="logo__top">David</span>
+            <span className="logo__bottom">Serrudo</span>
+          </a>
 
-          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
-        </div>
+          <div className="site-header__actions">
+            <LangToggle />
 
-        <div
-          className="navbar-links navbar-links--mobile"
-          hidden={!isMenuOpen}
-          id="mobile-navigation"
-        >
-          {profile.navItems.map((item) => (
-            <a
-              className="navbar-link navbar-link--mobile"
-              href={item.href}
-              key={item.href}
-              onClick={closeMenu}
+            <button
+              aria-controls="site-menu"
+              aria-expanded={isMenuOpen}
+              aria-label={isMenuOpen ? ui.closeMenu : ui.openMenu}
+              className="menu-button"
+              onClick={() => setIsMenuOpen((value) => !value)}
+              ref={toggleRef}
+              type="button"
             >
-              {item.label}
-            </a>
-          ))}
-        </div>
-      </nav>
-    </header>
+              <span aria-hidden="true" />
+              <span aria-hidden="true" />
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      <Menu
+        isOpen={isMenuOpen}
+        onClose={closeMenu}
+        theme={theme}
+        toggleRef={toggleRef}
+        onToggleTheme={onToggleTheme}
+      />
+    </>
   );
 };

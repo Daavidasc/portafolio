@@ -1,6 +1,20 @@
-import { profile } from '../data/profile';
+import { useState } from 'react';
+import type { Project } from '../data/projects';
+import { useColumnCount } from '../hooks/useColumnCount';
+import { useLang } from '../i18n/useLang';
+import { ProjectCard } from './ProjectCard';
+import { ProjectDetail } from './ProjectDetail';
+import { SectionTitle } from './SectionTitle';
 
 export const Projects = () => {
+  const { profile, projects, ui } = useLang();
+  const columnCount = useColumnCount();
+  const [selected, setSelected] = useState<Project | null>(null);
+
+  const columns = Array.from({ length: columnCount }, (_, column) =>
+    projects.filter((_, index) => index % columnCount === column),
+  );
+
   return (
     <section
       className="projects-section"
@@ -9,46 +23,48 @@ export const Projects = () => {
     >
       <div className="projects-shell">
         <div className="projects-heading">
-          <p className="projects-kicker">
-            <span>{profile.projects.label}</span>
-            <span>{profile.projects.range}</span>
-          </p>
-          <h2 id="projects-title">{profile.projects.title}</h2>
+          <SectionTitle
+            first="ML"
+            id="projects-title"
+            number="02"
+            second="PROJECTS"
+            secondStyle="serif"
+          />
           <p>{profile.projects.summary}</p>
         </div>
 
-        <div className="projects-grid" aria-label="Listado de proyectos">
-          {profile.projects.items.map((project) => (
-            <article className="project-item" key={project.id}>
-              <figure className="project-figure">
-                <img alt={project.alt} src={project.image} />
-              </figure>
-
-              <div className="project-meta">
-                <div>
-                  <h3>{project.name}</h3>
-                  <p>{project.category}</p>
-                  <p className="project-description">{project.description}</p>
-                </div>
-                <div>
-                  <span>{project.year}</span>
-                  <span>{project.status}</span>
-                  {project.href ? (
-                    <a
-                      className="project-link"
-                      href={project.href}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Ver proyecto
-                    </a>
-                  ) : null}
-                </div>
+        <div className="projects-stage">
+          <div
+            className="projects-grid"
+            role="list"
+            aria-label={ui.projectsList}
+          >
+            {columns.map((column, columnIndex) => (
+              <div className="projects-column" key={columnIndex}>
+                {column.map((project) => (
+                  <div role="listitem" key={project.slug}>
+                    <ProjectCard
+                      project={project}
+                      number={projects.indexOf(project) + 1}
+                      onOpen={setSelected}
+                    />
+                  </div>
+                ))}
               </div>
-            </article>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
+
+      <ProjectDetail
+        project={selected}
+        number={
+          selected
+            ? projects.findIndex((item) => item.slug === selected.slug) + 1
+            : 0
+        }
+        onClose={() => setSelected(null)}
+      />
     </section>
   );
 };

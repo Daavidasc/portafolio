@@ -1,33 +1,42 @@
-import { profile } from '../data/profile';
-import { SkillTags } from './SkillTags';
+import { scrollToHash } from '../lib/motion';
+import { PointCloud } from './PointCloud';
+import { useLang } from '../i18n/useLang';
 
 export const Hero = () => {
+  const { profile, ui } = useLang();
   return (
     <section
       className="relative isolate flex min-h-[100svh] flex-col overflow-hidden pt-16"
       id="inicio"
     >
-      <div className="mx-auto flex w-full max-w-[var(--layout-max)] flex-1 flex-col justify-center px-[var(--space-page)] pb-20 pt-10">
-        <div className="relative min-h-[15rem] sm:min-h-[18rem] lg:min-h-[22rem]">
-          <SkillTags />
-        </div>
-
-        <div className="relative z-10">
-          <p className="mb-5 max-w-xl font-mono text-xs uppercase leading-relaxed tracking-normal text-[var(--color-muted)] sm:text-sm">
-            {profile.hero.eyebrow}
-          </p>
-          <h1 className="hero-title" aria-label={profile.name}>
-            <span>DAVID</span> <span>SERRUDO</span>
-          </h1>
-
-        </div>
+      <div className="hero-cloud">
+        <PointCloud />
       </div>
+      <p className="hero-legend" aria-hidden="true">
+        {ui.heroLegend}
+      </p>
 
-      <div
-        className="mx-auto grid h-28 w-full max-w-[var(--layout-max)] grid-cols-[1fr_auto] items-start border-t border-[var(--color-line)] px-[var(--space-page)] py-5"
-        aria-hidden="true"
-      >
-
+      <div className="mx-auto flex w-full max-w-[var(--layout-max)] flex-1 flex-col justify-end px-[var(--space-page)] pb-12 pt-10">
+        <div className="hero-name">
+          <p className="hero-eyebrow">{profile.hero.eyebrow}</p>
+          <h1 className="hero-title" aria-label={profile.name}>
+            <span>David</span> <span className="name">SERRUDO</span>
+          </h1>
+          <div className="hero-lead">
+            <p>{profile.hero.tagline}</p>
+            <a
+              className="hero-scroll"
+              href="#proyectos"
+              onClick={(event) => {
+                event.preventDefault();
+                scrollToHash('#proyectos');
+              }}
+            >
+              {profile.hero.scrollCta}
+              <span aria-hidden="true"> ↓</span>
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   );
