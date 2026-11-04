@@ -24,7 +24,7 @@ export const Projects = () => {
       <div className="projects-shell">
         <div className="projects-heading">
           <SectionTitle
-            first="ML"
+            first="MY"
             id="projects-title"
             number="02"
             second="PROJECTS"

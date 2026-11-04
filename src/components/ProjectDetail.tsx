@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getLenis } from '../lib/motion';
 import { ProjectGallery } from './ProjectGallery';
+import { ProjectVideo } from './ProjectVideo';
 import { isPending } from '../data/projects';
 import type { Project } from '../data/projects';
 import { useLang } from '../i18n/useLang';
@@ -45,6 +46,7 @@ const ProjectDetailBody = ({
   const { playConfig } = project;
   const title = splitTitle(project.title);
   const images = project.gallery ?? [];
+  const hasMedia = Boolean(project.video) || images.length > 0;
   const padded = String(number).padStart(2, '0');
 
   // Si el foco no está dentro del juego (p. ej. justo tras pulsar «Jugar»), las teclas se reenvían a él para que
@@ -95,9 +97,11 @@ const ProjectDetailBody = ({
       </div>
 
       <div
-        className={`project-detail__hero${images.length === 0 ? ' is-fallback' : ' has-gallery'}`}
+        className={`project-detail__hero${hasMedia ? ' has-gallery' : ' is-fallback'}`}
       >
-        {images.length > 0 ? (
+        {project.video ? (
+          <ProjectVideo src={project.video} title={project.title} />
+        ) : images.length > 0 ? (
           <ProjectGallery images={images} title={project.title} />
         ) : (
           <span aria-hidden="true" className="project-detail__number">

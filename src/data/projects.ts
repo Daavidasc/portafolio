@@ -20,7 +20,7 @@ export type Project = {
   hoverAlign?: 'start';
   /** Fondo de la tarjeta: 'cream' (crema de ViviEstu) o 'forest' (verde oscuro de Greenlight), para logos. */
   tone?: 'cream' | 'forest';
-  /** Video de juego (pendiente en karate-panamericano; aún no se muestra en ningún sitio). */
+  /** Video que se reproduce solo (mudo, en bucle) arriba de la ventana de detalle, en lugar de la galería. */
   video?: string;
   /** Capturas que se ven en el detalle del proyecto. */
   gallery?: string[];
@@ -56,6 +56,8 @@ const projectBase: ProjectBase[] = [
     year: '2025',
     metrics: [],
     image: asset('/images/projects/project-reference-grid.png'),
+    // Render a pantalla completa (358×456, ~10 s) que se reproduce al abrir la ventana.
+    video: asset('/projects/emotiongestureapp/render.mp4'),
     links: { github: 'https://github.com/Daavidasc/EmotionGestureApp' },
     text: {
       es: {
@@ -413,20 +415,35 @@ const projectBase: ProjectBase[] = [
     // Portada: el logo (PNG transparente) sobre verde bosque oscuro.
     image: asset('/projects/greenlight/logo.png'),
     tone: 'forest',
-    // Pendiente: descripción, stack, enlaces y capturas (David los enviará).
-    links: {},
+    // Al pasar el mouse: captura de la app (storyboard de una escena).
+    imageHover: asset('/projects/greenlight/hover.png'),
+    hoverFit: 'cover',
+    // Capturas: storyboard primero (la más visual), luego análisis del guion y presupuesto.
+    // Recortadas a 1535×927 (misma proporción que el marco de la galería) para que no queden franjas.
+    gallery: [
+      asset('/projects/greenlight/storyboard.png'),
+      asset('/projects/greenlight/analisis.png'),
+      asset('/projects/greenlight/presupuesto.png'),
+    ],
+    // Descripción y stack tomados del README del repositorio.
+    links: {
+      github: 'https://github.com/Daavidasc/Greenlight',
+      demo: 'https://agentic-preproduction-433256380169.us-central1.run.app/',
+    },
     text: {
       es: {
         title: 'Greenlight',
-        tagline: 'App de cine con IA.',
-        description: '',
-        stack: [],
+        tagline: 'Del guion en PDF al storyboard, presupuesto y plan de rodaje.',
+        description:
+          'Asistente de producción para cineastas independientes: convierte un guion en PDF en un análisis escena por escena, storyboards, un presupuesto con fuentes y un calendario de rodaje. Gemini en Vertex AI, orquestado con Google ADK, analiza el guion y genera el concept art, y la Parallel Search API consulta tarifas actuales de mercado citando sus fuentes. Hecho para el hackathon Agentic Cinema (Google Cloud), categoría Parallel.',
+        stack: ['Gemini', 'Google ADK', 'FastAPI', 'React', 'Cloud Run'],
       },
       en: {
         title: 'Greenlight',
-        tagline: 'An AI film app.',
-        description: '',
-        stack: [],
+        tagline: 'From a PDF script to a storyboard, budget and shooting schedule.',
+        description:
+          'Production assistant for independent filmmakers: it turns a PDF script into a scene-by-scene analysis, storyboards, a sourced budget and a shooting schedule. Gemini on Vertex AI, orchestrated with Google ADK, analyzes the script and generates the concept art, and the Parallel Search API looks up current market rates and cites its sources. Built for the Agentic Cinema hackathon (Google Cloud), Parallel track.',
+        stack: ['Gemini', 'Google ADK', 'FastAPI', 'React', 'Cloud Run'],
       },
     },
   },
