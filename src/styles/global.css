@@ -9,17 +9,17 @@
   font-display: swap;
 }
 
-/* Brier (versión de prueba, solo para evaluar en local: no publicar sin licencia). */
+/* Brier: serif de acento (títulos). Archivos propios en /public/fonts. */
 @font-face {
   font-family: "Brier";
-  src: url("/fonts/trial/Brier-Regular.otf") format("opentype");
+  src: url("/fonts/Brier-Regular.otf") format("opentype");
   font-weight: 400;
   font-display: swap;
 }
 
 @font-face {
   font-family: "Brier";
-  src: url("/fonts/trial/Brier-Bold.otf") format("opentype");
+  src: url("/fonts/Brier-Bold.otf") format("opentype");
   font-weight: 700;
   font-display: swap;
 }
@@ -33,7 +33,7 @@
 
 :root {
   --font-sans: "Mona Sans", "Mona Sans Fallback", Arial, sans-serif;
-  /* Brier es la serif de acento (versión de prueba). Bodoni queda solo como respaldo si Brier no está. */
+  /* Brier es la serif de acento. Bodoni queda solo como respaldo si Brier no carga. */
   --font-serif: "Brier", "Bodoni Moda Variable", "Bodoni Moda", Georgia, serif;
   --font-serif-italic: "Bodoni Moda Variable", "Bodoni Moda", Georgia, serif;
   /* No hay tercera familia: los datos usan la sans con cifras tabulares. */
