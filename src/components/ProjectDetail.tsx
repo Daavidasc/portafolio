@@ -13,7 +13,12 @@ type ProjectDetailProps = {
   onClose: () => void;
 };
 
-const linkLabels = { github: 'GitHub', demo: 'Demo', paper: 'Paper' } as const;
+const linkLabels = {
+  github: 'GitHub',
+  githubBack: 'GitHub Back',
+  demo: 'Demo',
+  paper: 'Paper',
+} as const;
 const linkKeys = Object.keys(linkLabels) as (keyof typeof linkLabels)[];
 
 type ProjectDetailBodyProps = {
@@ -171,7 +176,10 @@ const ProjectDetailBody = ({
                 target="_blank"
                 rel="noreferrer"
               >
-                {linkLabels[key]} <span aria-hidden="true">↗</span>
+                {key === 'github' && project.links.githubBack
+                  ? 'GitHub Front'
+                  : linkLabels[key]}{' '}
+                <span aria-hidden="true">↗</span>
               </a>
             ))}
           </div>

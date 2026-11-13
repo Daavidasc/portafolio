@@ -789,6 +789,14 @@ section[id] {
   fill: #0e2018;
 }
 
+.project-card.is-white .project-card__outline:not(.project-card__outline--top) > path:first-child {
+  fill: #ffffff;
+}
+
+.project-card.is-night .project-card__outline:not(.project-card__outline--top) > path:first-child {
+  fill: #04060c;
+}
+
 .project-card:hover .project-card__outline path,
 .project-card:focus-visible .project-card__outline path {
   stroke: var(--color-accent);

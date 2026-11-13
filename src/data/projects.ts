@@ -18,13 +18,14 @@ export type Project = {
   hoverFit?: 'cover';
   /** 'start': la segunda imagen se recorta desde la izquierda (no desde el centro), p. ej. para que se vea el logo. */
   hoverAlign?: 'start';
-  /** Fondo de la tarjeta: 'cream' (crema de ViviEstu) o 'forest' (verde oscuro de Greenlight), para logos. */
-  tone?: 'cream' | 'forest';
+  /** Fondo de la tarjeta: 'cream' (crema de ViviEstu), 'forest' (verde oscuro de Greenlight) 'white' (blanco de MyDNS) o 'night' (casi negro de KeplerX), para logos. */
+  tone?: 'cream' | 'forest' | 'white' | 'night';
   /** Video que se reproduce solo (mudo, en bucle) arriba de la ventana de detalle, en lugar de la galería. */
   video?: string;
   /** Capturas que se ven en el detalle del proyecto. */
   gallery?: string[];
-  links: { github?: string; demo?: string; paper?: string };
+  /** Con githubBack, el enlace github se muestra como «GitHub Front» (repos separados). */
+  links: { github?: string; githubBack?: string; demo?: string; paper?: string };
   /** 'wasm-gui': se puede jugar en el navegador desde el detalle. */
   type?: 'wasm-gui';
   playConfig?: PlayConfig;
@@ -55,7 +56,11 @@ const projectBase: ProjectBase[] = [
     slug: 'emotiongestureapp',
     year: '2025',
     metrics: [],
-    image: asset('/images/projects/project-reference-grid.png'),
+    // Portada: collage de caras (personas, animales, dibujos); llena toda la tarjeta.
+    image: asset('/projects/emotiongestureapp/cover.png'),
+    // Al pasar el mouse: la app en uso (detección de cara y mano).
+    imageHover: asset('/projects/emotiongestureapp/hover.png'),
+    imageFit: 'cover',
     // Render a pantalla completa (358×456, ~10 s) que se reproduce al abrir la ventana.
     video: asset('/projects/emotiongestureapp/render.mp4'),
     links: { github: 'https://github.com/Daavidasc/EmotionGestureApp' },
@@ -92,7 +97,11 @@ const projectBase: ProjectBase[] = [
       asset('/projects/viviestu/image2.png'),
       asset('/projects/viviestu/image3.png'),
     ],
-    links: {},
+    links: {
+      github: 'https://github.com/Daavidasc/viviEstu-app-front',
+      githubBack: 'https://github.com/Machiz/ViviEstu',
+      demo: 'https://viviestu.vercel.app/',
+    },
     text: {
       es: {
         title: 'ViviEstu',
@@ -114,7 +123,19 @@ const projectBase: ProjectBase[] = [
     slug: 'keplerx',
     year: '2025',
     metrics: [],
-    image: asset('/images/projects/project-reference-grid.png'),
+    // Portada: el logo con su propio fondo casi negro (#04060c), igual que la tarjeta.
+    image: asset('/projects/keplerx/logo.png'),
+    tone: 'night',
+    // Al pasar el mouse: animación del tránsito (el brillo de la estrella baja cuando pasa el planeta).
+    imageHover: asset('/projects/keplerx/hover.png'),
+    hoverFit: 'cover',
+    // Capturas: inicio, cómo funciona y resultado del análisis. Ajustadas a 1610×972
+    // (proporción del marco de la galería) sin recortar contenido.
+    gallery: [
+      asset('/projects/keplerx/inicio.png'),
+      asset('/projects/keplerx/como-funciona.png'),
+      asset('/projects/keplerx/resultado.png'),
+    ],
     links: { github: 'https://github.com/Machiz/KeplerX' },
     text: {
       es: {
@@ -130,150 +151,6 @@ const projectBase: ProjectBase[] = [
         description:
           'End-to-end system that identifies exoplanets from open NASA astronomical data, combining statistical analysis, Machine Learning and reproducible deployment.',
         stack: ['Data Science', 'ML', 'API', 'Docker'],
-      },
-    },
-  },
-  {
-    slug: 'kmeans-concurrente',
-    year: 'TODO',
-    metrics: [{ label: 'TODO', value: 'TODO' }],
-    image: asset('/images/projects/kmeans-concurrente.svg'),
-    imageHover: asset('/images/projects/kmeans-concurrente-hover.svg'),
-    links: {},
-    text: {
-      es: {
-        title: 'K-Means concurrente en Go',
-        tagline: 'Clustering de datos de energía con goroutines',
-        description:
-          'Implementación concurrente del algoritmo K-Means en Go para agrupar datos de consumo de energía, usando goroutines.',
-        stack: ['Go', 'Concurrencia', 'K-Means'],
-      },
-      en: {
-        title: 'Concurrent K-Means in Go',
-        tagline: 'Energy-data clustering with goroutines',
-        description:
-          'Concurrent implementation of the K-Means algorithm in Go to cluster energy consumption data using goroutines.',
-        stack: ['Go', 'Concurrency', 'K-Means'],
-      },
-    },
-  },
-  {
-    slug: 'pokemon-rl',
-    year: 'TODO',
-    metrics: [{ label: 'TODO', value: 'TODO' }],
-    image: asset('/images/projects/pokemon-rl.svg'),
-    imageHover: asset('/images/projects/pokemon-rl-hover.svg'),
-    links: {},
-    text: {
-      es: {
-        title: 'Agente RL para Pokémon',
-        tagline: 'Agente que generaliza a mecánicas de juego nuevas',
-        description:
-          'Agente de aprendizaje por refuerzo que busca generalizar a mecánicas de juego no vistas durante el entrenamiento.',
-        stack: ['Python', 'Reinforcement Learning'],
-      },
-      en: {
-        title: 'RL agent for Pokémon',
-        tagline: 'Agent that generalizes to new game mechanics',
-        description:
-          'Reinforcement learning agent that aims to generalize to game mechanics not seen during training.',
-        stack: ['Python', 'Reinforcement Learning'],
-      },
-    },
-  },
-  {
-    slug: 'migepete',
-    year: 'TODO',
-    metrics: [{ label: 'TODO', value: 'TODO' }],
-    image: asset('/images/projects/migepete.svg'),
-    imageHover: asset('/images/projects/migepete-hover.svg'),
-    links: {},
-    text: {
-      es: {
-        title: 'MiGepete (mini GPT)',
-        tagline: 'Modelo estilo nanoGPT entrenado desde cero en PyTorch',
-        description:
-          'Modelo de lenguaje pequeño estilo nanoGPT, entrenado desde cero con PyTorch.',
-        stack: ['Python', 'PyTorch', 'Transformers'],
-      },
-      en: {
-        title: 'MiGepete (mini GPT)',
-        tagline: 'nanoGPT-style model trained from scratch in PyTorch',
-        description:
-          'Small nanoGPT-style language model trained from scratch with PyTorch.',
-        stack: ['Python', 'PyTorch', 'Transformers'],
-      },
-    },
-  },
-  {
-    slug: 'hibrido-cuantico',
-    year: 'TODO',
-    metrics: [{ label: 'TODO', value: 'TODO' }],
-    image: asset('/images/projects/hibrido-cuantico.svg'),
-    imageHover: asset('/images/projects/hibrido-cuantico-hover.svg'),
-    links: {},
-    text: {
-      es: {
-        title: 'Modelo híbrido cuántico-clásico',
-        tagline: 'Artículo científico (TP1), asesor Willy Ugarte',
-        description:
-          'Artículo científico sobre un modelo híbrido cuántico-clásico, desarrollado con el asesor Willy Ugarte.',
-        stack: ['Computación cuántica', 'Machine Learning'],
-      },
-      en: {
-        title: 'Hybrid quantum-classical model',
-        tagline: 'Scientific paper (TP1), advisor Willy Ugarte',
-        description:
-          'Scientific paper on a hybrid quantum-classical model, developed with advisor Willy Ugarte.',
-        stack: ['Quantum computing', 'Machine Learning'],
-      },
-    },
-  },
-  {
-    slug: 'yousician-ukulele',
-    year: 'TODO',
-    metrics: [{ label: 'TODO', value: 'TODO' }],
-    image: asset('/images/projects/yousician-ukulele.svg'),
-    imageHover: asset('/images/projects/yousician-ukulele-hover.svg'),
-    links: {},
-    text: {
-      es: {
-        title: 'Análisis de datos Yousician',
-        tagline: 'Proyecto de data science: comprensión y preprocesamiento',
-        description:
-          'Proyecto de data science centrado en la comprensión y el preprocesamiento de datos de Yousician.',
-        stack: ['Python', 'Data Science'],
-      },
-      en: {
-        title: 'Yousician data analysis',
-        tagline: 'Data science project: data understanding and preprocessing',
-        description:
-          'Data science project focused on understanding and preprocessing Yousician data.',
-        stack: ['Python', 'Data Science'],
-      },
-    },
-  },
-  {
-    slug: 'audit-llm',
-    year: 'TODO',
-    metrics: [{ label: 'TODO', value: 'TODO' }],
-    image: asset('/images/projects/audit-llm.svg'),
-    imageHover: asset('/images/projects/audit-llm-hover.svg'),
-    links: {},
-    text: {
-      es: {
-        title: 'Auditoría de sesgo en LLMs (CENIA)',
-        tagline: 'Investigación en auditoría situada de interacción',
-        description:
-          'Investigación en auditoría situada de la interacción con modelos de lenguaje, en el marco de CENIA.',
-        stack: ['LLMs', 'Auditoría', 'Investigación'],
-      },
-      en: {
-        title: 'LLM bias audit (CENIA)',
-        tagline: 'Research on situated auditing of interaction',
-        description:
-          'Research on situated auditing of interaction with language models, within CENIA.',
-        stack: ['LLMs', 'Auditing', 'Research'],
       },
     },
   },
@@ -444,6 +321,38 @@ const projectBase: ProjectBase[] = [
         description:
           'Production assistant for independent filmmakers: it turns a PDF script into a scene-by-scene analysis, storyboards, a sourced budget and a shooting schedule. Gemini on Vertex AI, orchestrated with Google ADK, analyzes the script and generates the concept art, and the Parallel Search API looks up current market rates and cites its sources. Built for the Agentic Cinema hackathon (Google Cloud), Parallel track.',
         stack: ['Gemini', 'Google ADK', 'FastAPI', 'React', 'Cloud Run'],
+      },
+    },
+  },
+  {
+    slug: 'mydns',
+    year: '2026',
+    metrics: [],
+    // Portada: el logo (PNG transparente; "my" azul marino) sobre tarjeta blanca, donde se lee mejor.
+    image: asset('/projects/mydns/logo.png'),
+    tone: 'white',
+    // Al pasar el mouse: el panel de dispositivos detectados del dashboard.
+    imageHover: asset('/projects/mydns/hover.png'),
+    hoverFit: 'cover',
+    // Capturas del dashboard: panel general (dispositivos y tráfico) y blacklist.
+    // Recortadas a 1294×781 (misma proporción que el marco de la galería).
+    gallery: [asset('/projects/mydns/panel.png'), asset('/projects/mydns/blacklist.png')],
+    // Descripción y stack tomados del README del repositorio.
+    links: { github: 'https://github.com/Daavidasc/MyDNS' },
+    text: {
+      es: {
+        title: 'MyDNS',
+        tagline: 'DNS local para ver el tráfico de la red y bloquear dominios',
+        description:
+          'Sistema local para visualizar el tráfico DNS de la red y restringir el acceso a páginas web por sus dominios. Los dispositivos de la red consultan a este DNS: si el dominio está en la blacklist responde 0.0.0.0 y la página queda bloqueada; si no, reenvía la consulta a un DNS externo. Un servidor en Python registra las consultas en SQLite y un panel en Next.js muestra el tráfico, los dispositivos detectados y administra la blacklist.',
+        stack: ['Python', 'dnslib', 'SQLite', 'Next.js'],
+      },
+      en: {
+        title: 'MyDNS',
+        tagline: 'Local DNS to monitor network traffic and block domains',
+        description:
+          'Local system to monitor DNS traffic on the network and restrict access to websites by domain. Devices on the network query this DNS: if the domain is on the blacklist it answers 0.0.0.0 and the site is blocked; otherwise it forwards the query to an external DNS. A Python server logs queries to SQLite and a Next.js dashboard shows the traffic and detected devices and manages the blacklist.',
+        stack: ['Python', 'dnslib', 'SQLite', 'Next.js'],
       },
     },
   },
