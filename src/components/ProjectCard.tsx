@@ -3,6 +3,7 @@ import { isPending } from '../data/projects';
 import type { Project } from '../data/projects';
 import { useInView } from '../hooks/useInView';
 import { useLang } from '../i18n/useLang';
+import { ProjectCardStack } from './ProjectCardStack';
 
 const RADIUS = 16;
 const CURVE = 12;
@@ -198,6 +199,8 @@ export const ProjectCard = ({ project, number, onOpen }: ProjectCardProps) => {
             <path className="project-card__stroke" d={buildPath(size)} />
           </svg>
         ) : null}
+
+        <ProjectCardStack stack={project.stack} />
 
         <span className="project-card__tab" ref={tabRef}>
           <span className="project-card__title">{project.title}</span>

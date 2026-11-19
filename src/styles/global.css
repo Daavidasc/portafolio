@@ -797,6 +797,10 @@ section[id] {
   fill: #04060c;
 }
 
+.project-card.is-mist .project-card__outline:not(.project-card__outline--top) > path:first-child {
+  fill: #e9ecf3;
+}
+
 .project-card:hover .project-card__outline path,
 .project-card:focus-visible .project-card__outline path {
   stroke: var(--color-accent);
@@ -862,6 +866,84 @@ section[id] {
 .project-card__year {
   color: var(--color-accent);
   font-weight: 600;
+}
+
+/* Stack como bloques naranjas: cada tecnología cae a su sitio, uno tras otro, en la esquina superior. */
+.project-card__specs {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  display: flex;
+  max-width: calc(100% - 1.5rem);
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  pointer-events: none;
+}
+
+.project-card__specs-item {
+  padding: 0.3rem 0.55rem;
+  border-radius: 0.3rem;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(-0.4rem);
+  transition:
+    opacity 240ms ease,
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-card:hover .project-card__specs-item,
+.project-card:focus-visible .project-card__specs-item {
+  opacity: 1;
+  transform: none;
+}
+
+.project-card:hover .project-card__specs-item:nth-child(1),
+.project-card:focus-visible .project-card__specs-item:nth-child(1) {
+  transition-delay: 180ms;
+}
+
+.project-card:hover .project-card__specs-item:nth-child(2),
+.project-card:focus-visible .project-card__specs-item:nth-child(2) {
+  transition-delay: 220ms;
+}
+
+.project-card:hover .project-card__specs-item:nth-child(3),
+.project-card:focus-visible .project-card__specs-item:nth-child(3) {
+  transition-delay: 260ms;
+}
+
+.project-card:hover .project-card__specs-item:nth-child(4),
+.project-card:focus-visible .project-card__specs-item:nth-child(4) {
+  transition-delay: 300ms;
+}
+
+.project-card:hover .project-card__specs-item:nth-child(5),
+.project-card:focus-visible .project-card__specs-item:nth-child(5) {
+  transition-delay: 340ms;
+}
+
+.project-card:hover .project-card__specs-item:nth-child(n + 6),
+.project-card:focus-visible .project-card__specs-item:nth-child(n + 6) {
+  transition-delay: 380ms;
+}
+
+/* Sin hover (táctil) los bloques no se muestran: el stack está en el detalle. */
+@media (hover: none) {
+  .project-card__specs {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-card__specs-item {
+    transform: none;
+    transition: opacity 200ms ease;
+  }
 }
 
 .project-detail {
@@ -1225,6 +1307,18 @@ html::-webkit-scrollbar-thumb:hover,
 
 .project-detail__tagline {
   color: var(--color-muted);
+}
+
+/* Invitación a probarlo: flecha de acento colgada a la izquierda, texto en peso medio. */
+.project-detail__cta {
+  display: flex;
+  gap: 0.6rem;
+  font-weight: 500;
+}
+
+.project-detail__cta > span {
+  flex: none;
+  color: var(--color-accent);
 }
 
 .project-detail__stack {

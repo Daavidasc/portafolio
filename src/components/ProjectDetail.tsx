@@ -131,6 +131,12 @@ const ProjectDetailBody = ({
         </h3>
         <p className="project-detail__tagline">{project.tagline}</p>
         {project.description ? <p>{project.description}</p> : null}
+        {project.cta ? (
+          <p className="project-detail__cta">
+            <span aria-hidden="true">→</span>
+            {project.cta}
+          </p>
+        ) : null}
 
         <ul className="project-detail__stack" aria-label={ui.stack}>
           {project.stack.map((item) => (

@@ -7,6 +7,8 @@ export type Project = {
   year: string;
   tagline: string;
   description: string;
+  /** Invitación a probarlo (demo, jugar aquí o clonar el repo); va tras la descripción. */
+  cta?: string;
   stack: string[];
   metrics: { label: string; value: string }[];
   /** Portada. Sin ella la tarjeta no pinta imagen (p. ej. karate-panamericano, pendiente). */
@@ -18,8 +20,8 @@ export type Project = {
   hoverFit?: 'cover';
   /** 'start': la segunda imagen se recorta desde la izquierda (no desde el centro), p. ej. para que se vea el logo. */
   hoverAlign?: 'start';
-  /** Fondo de la tarjeta: 'cream' (crema de ViviEstu), 'forest' (verde oscuro de Greenlight) 'white' (blanco de MyDNS) o 'night' (casi negro de KeplerX), para logos. */
-  tone?: 'cream' | 'forest' | 'white' | 'night';
+  /** Fondo de la tarjeta: 'cream' (crema de ViviEstu), 'forest' (verde oscuro de Greenlight) 'white' (blanco de MyDNS), 'night' (casi negro de KeplerX) o 'mist' (gris azulado claro de Urpi), para logos. */
+  tone?: 'cream' | 'forest' | 'white' | 'night' | 'mist';
   /** Video que se reproduce solo (mudo, en bucle) arriba de la ventana de detalle, en lugar de la galería. */
   video?: string;
   /** Capturas que se ven en el detalle del proyecto. */
@@ -41,6 +43,7 @@ type ProjectText = {
   title: string;
   tagline: string;
   description: string;
+  cta?: string;
   stack: string[];
   controls?: string[];
 };
@@ -70,7 +73,7 @@ const projectBase: ProjectBase[] = [
       asset('/projects/greenlight/analisis.png'),
       asset('/projects/greenlight/presupuesto.png'),
     ],
-    // Descripción y stack tomados del README del repositorio.
+    // Descripción y stack tomados del README y el código del repositorio.
     links: {
       github: 'https://github.com/Daavidasc/Greenlight',
       demo: 'https://agentic-preproduction-433256380169.us-central1.run.app/',
@@ -78,17 +81,19 @@ const projectBase: ProjectBase[] = [
     text: {
       es: {
         title: 'Greenlight',
-        tagline: 'Del guion en PDF al storyboard, presupuesto y plan de rodaje.',
+        tagline: 'El asistente de producción que un cineasta independiente no tiene.',
         description:
-          'Asistente de producción para cineastas independientes: convierte un guion en PDF en un análisis escena por escena, storyboards, un presupuesto con fuentes y un calendario de rodaje. Gemini en Vertex AI, orquestado con Google ADK, analiza el guion y genera el concept art, y la Parallel Search API consulta tarifas actuales de mercado citando sus fuentes. Hecho para el hackathon Agentic Cinema (Google Cloud), categoría Parallel.',
-        stack: ['Gemini', 'Google ADK', 'FastAPI', 'React', 'Cloud Run'],
+          'Subes un guion en PDF y Greenlight devuelve, en minutos, el desglose de cada escena (locación, INT/EXT, día o noche, personajes, utilería y vestuario), un storyboard con concept art por escena, un presupuesto con tarifas reales de mercado y un plan de rodaje que agrupa las escenas por locación. Un agente de Google ADK orquesta Gemini 2.5 en Vertex AI con salidas estructuradas en Pydantic, y la Parallel Search API busca precios de alquiler y de crew citando sus fuentes. El backend en FastAPI y el frontend en React y TypeScript están desplegados en Cloud Run. Pensado para productores de Chile y Latinoamérica sin acceso a herramientas de estudio; hecho para el hackathon Agentic Cinema de Google Cloud, categoría Parallel.',
+        cta: 'Pruébalo en la demo con tu propio guion en PDF. La versión pública tiene un límite de uso diario; si clonas el repositorio y usas tus credenciales de Google Cloud, corre sin límite.',
+        stack: ['Gemini', 'Google ADK', 'FastAPI', 'React'],
       },
       en: {
         title: 'Greenlight',
-        tagline: 'From a PDF script to a storyboard, budget and shooting schedule.',
+        tagline: 'The production assistant independent filmmakers never had.',
         description:
-          'Production assistant for independent filmmakers: it turns a PDF script into a scene-by-scene analysis, storyboards, a sourced budget and a shooting schedule. Gemini on Vertex AI, orchestrated with Google ADK, analyzes the script and generates the concept art, and the Parallel Search API looks up current market rates and cites its sources. Built for the Agentic Cinema hackathon (Google Cloud), Parallel track.',
-        stack: ['Gemini', 'Google ADK', 'FastAPI', 'React', 'Cloud Run'],
+          'Upload a PDF script and Greenlight returns, in minutes, a breakdown of every scene (location, INT/EXT, day or night, characters, props and wardrobe), a storyboard with concept art for each scene, a budget built on real market rates and a shooting schedule that groups scenes by location. A Google ADK agent orchestrates Gemini 2.5 on Vertex AI with Pydantic structured outputs, and the Parallel Search API looks up rental and crew prices and cites its sources. The FastAPI backend and the React and TypeScript frontend run on Cloud Run. Designed for producers in Chile and Latin America without access to studio tools; built for the Google Cloud Agentic Cinema hackathon, Parallel track.',
+        cta: 'Try it in the demo with your own PDF script. The public version has a daily usage cap; clone the repository and use your own Google Cloud credentials to run it without limits.',
+        stack: ['Gemini', 'Google ADK', 'FastAPI', 'React'],
       },
     },
   },
@@ -105,22 +110,68 @@ const projectBase: ProjectBase[] = [
     // Capturas del dashboard: panel general (dispositivos y tráfico) y blacklist.
     // Recortadas a 1294×781 (misma proporción que el marco de la galería).
     gallery: [asset('/projects/mydns/panel.png'), asset('/projects/mydns/blacklist.png')],
-    // Descripción y stack tomados del README del repositorio.
+    // Descripción y stack tomados del README y el código del repositorio.
     links: { github: 'https://github.com/Daavidasc/MyDNS' },
     text: {
       es: {
         title: 'MyDNS',
-        tagline: 'DNS local para ver el tráfico de la red y bloquear dominios',
+        tagline: 'Un DNS propio para ver qué consulta cada dispositivo de la red y bloquear sitios.',
         description:
-          'Sistema local para visualizar el tráfico DNS de la red y restringir el acceso a páginas web por sus dominios. Los dispositivos de la red consultan a este DNS: si el dominio está en la blacklist responde 0.0.0.0 y la página queda bloqueada; si no, reenvía la consulta a un DNS externo. Un servidor en Python registra las consultas en SQLite y un panel en Next.js muestra el tráfico, los dispositivos detectados y administra la blacklist.',
-        stack: ['Python', 'dnslib', 'SQLite', 'Next.js'],
+          'Servidor DNS local que se configura en el router para que toda la red pase por él. Cada consulta queda registrada: si el dominio está en la blacklist responde 0.0.0.0 y la página no carga; si no, la reenvía a un DNS externo. El núcleo está escrito en Python con dnslib, escucha en el puerto 53 y guarda el historial en SQLite; un panel en Next.js y TypeScript lee esa misma base para mostrar el tráfico en vivo, los dispositivos detectados y administrar los dominios bloqueados.',
+        cta: 'Clona el repositorio y pruébalo en tu propia red: inicia el servidor DNS y el panel, y pon la IP de tu computadora como DNS principal en el router. En Windows, ejecútalo como administrador para poder usar el puerto 53.',
+        stack: ['Python', 'SQLite', 'Next.js'],
       },
       en: {
         title: 'MyDNS',
-        tagline: 'Local DNS to monitor network traffic and block domains',
+        tagline: 'A home-made DNS to see what every device on the network looks up, and block sites.',
         description:
-          'Local system to monitor DNS traffic on the network and restrict access to websites by domain. Devices on the network query this DNS: if the domain is on the blacklist it answers 0.0.0.0 and the site is blocked; otherwise it forwards the query to an external DNS. A Python server logs queries to SQLite and a Next.js dashboard shows the traffic and detected devices and manages the blacklist.',
-        stack: ['Python', 'dnslib', 'SQLite', 'Next.js'],
+          'Local DNS server that is set on the router so the whole network goes through it. Every query is logged: if the domain is on the blacklist it answers 0.0.0.0 and the page does not load; otherwise it forwards the query to an external DNS. The core is written in Python with dnslib, listens on port 53 and stores the history in SQLite; a Next.js and TypeScript dashboard reads the same database to show live traffic and detected devices and to manage blocked domains.',
+        cta: 'Clone the repository and try it on your own network: start the DNS server and the dashboard, then set your computer’s IP as the primary DNS on your router. On Windows, run it as administrator so it can use port 53.',
+        stack: ['Python', 'SQLite', 'Next.js'],
+      },
+    },
+  },
+  {
+    slug: 'urpi',
+    year: '2026',
+    metrics: [],
+    // Portada: el favicon (paloma, PNG transparente) sobre gris azulado claro, del mismo tono que la marca.
+    image: asset('/projects/urpi/logo.png'),
+    tone: 'mist',
+    // Al pasar el mouse: la lista de productos en tema claro (captura de David), recortada desde la izquierda
+    // para que se vean el título y los nombres.
+    imageHover: asset('/projects/urpi/hover.png'),
+    hoverFit: 'cover',
+    hoverAlign: 'start',
+    // Galería a 1535×927 (proporción del marco): dashboard, la conversación real con Pid por WhatsApp
+    // (centrada sobre negro) e insights.
+    gallery: [
+      asset('/projects/urpi/dashboard.png'),
+      asset('/projects/urpi/whatsapp.png'),
+      asset('/projects/urpi/insights.png'),
+    ],
+    // Descripción y stack tomados del README y el código de los dos repositorios.
+    links: {
+      github: 'https://github.com/Daavidasc/Urpi-Front',
+      githubBack: 'https://github.com/Daavidasc/Urpi-Back',
+      demo: 'https://urpi-front.vercel.app',
+    },
+    text: {
+      es: {
+        title: 'Urpi',
+        tagline: 'Inventario para pequeños negocios que se maneja conversando, incluso por WhatsApp.',
+        description:
+          'Sistema de inventario para pymes: registra productos con su proveedor, lote de compra y stock mínimo, lleva las entradas y salidas, y un dashboard muestra el valor del inventario, el flujo de los últimos días y las alertas de stock bajo, con recomendaciones generadas a partir de los datos. Su asistente de IA usa Claude con herramientas para consultar el inventario, decir qué reponer y cuánto pedir, y registrar movimientos o productos nuevos en lenguaje natural, desde la web o por WhatsApp con Twilio, donde también entiende audios transcritos con Whisper. El backend es una API REST en Express y TypeScript con PostgreSQL y Drizzle, y el frontend está hecho en React con Tailwind.',
+        cta: 'Pruébalo en la web: revisa el dashboard y los productos, y pregúntale al asistente qué productos tienen stock bajo o pídele que registre una entrada.',
+        stack: ['React', 'Express', 'PostgreSQL', 'Claude'],
+      },
+      en: {
+        title: 'Urpi',
+        tagline: 'Inventory for small businesses that you run by chatting, even on WhatsApp.',
+        description:
+          'Inventory system for small businesses: it records products with their supplier, purchase lot and minimum stock, tracks stock in and out, and a dashboard shows inventory value, the flow of recent days and low-stock alerts, with recommendations generated from the data. Its AI assistant uses Claude with tools to query the inventory, say what to restock and how much to order, and log movements or new products in natural language, from the web or over WhatsApp with Twilio, where it also understands voice notes transcribed with Whisper. The backend is an Express and TypeScript REST API with PostgreSQL and Drizzle, and the frontend is built with React and Tailwind.',
+        cta: 'Try it on the web: browse the dashboard and products, and ask the assistant which products are running low or have it log a stock entry.',
+        stack: ['React', 'Express', 'PostgreSQL', 'Claude'],
       },
     },
   },
@@ -139,17 +190,19 @@ const projectBase: ProjectBase[] = [
     text: {
       es: {
         title: 'EmotionGestureApp',
-        tagline: 'Visión artificial en tiempo real para gestos y emociones',
+        tagline: 'La cámara lee tu cara y tus manos, y responde con una reacción.',
         description:
-          'Aplicación de visión artificial en tiempo real para la interacción hombre-máquina mediante detección de gestos y emociones.',
-        stack: ['Computer Vision', 'IA'],
+          'Aplicación de visión artificial que analiza la webcam en tiempo real. Clasifica la emoción del rostro (feliz, triste, sorprendido o neutral) con un modelo de Deep Learning sobre TensorFlow, usa los landmarks de MediaPipe para detectar si miras de reojo y reconoce gestos de la mano como pulgar arriba, pulgar abajo o la mano en el mentón «pensando». Según lo que detecta, muestra junto al video la imagen de reacción que corresponde y las probabilidades de cada emoción.',
+        cta: 'Clona el repositorio, instala las dependencias y ejecútalo con tu webcam: sonríe, haz un pulgar arriba o lleva la mano al mentón y mira cómo responde.',
+        stack: ['Python', 'OpenCV', 'MediaPipe', 'TensorFlow'],
       },
       en: {
         title: 'EmotionGestureApp',
-        tagline: 'Real-time computer vision for gestures and emotions',
+        tagline: 'The camera reads your face and hands, and answers with a reaction.',
         description:
-          'Real-time computer vision application for human-machine interaction through gesture and emotion detection.',
-        stack: ['Computer Vision', 'AI'],
+          'Computer vision app that analyzes the webcam in real time. It classifies the facial emotion (happy, sad, surprised or neutral) with a TensorFlow deep learning model, uses MediaPipe landmarks to detect side-eye glances, and recognizes hand gestures such as thumbs up, thumbs down or a hand on the chin “thinking”. Depending on what it sees, it shows the matching reaction image next to the video, along with the probability of each emotion.',
+        cta: 'Clone the repository, install the dependencies and run it with your webcam: smile, give a thumbs up or rest your hand on your chin and watch it react.',
+        stack: ['Python', 'OpenCV', 'MediaPipe', 'TensorFlow'],
       },
     },
   },
@@ -177,17 +230,19 @@ const projectBase: ProjectBase[] = [
     text: {
       es: {
         title: 'KeplerX',
-        tagline: 'Detección de exoplanetas con datos abiertos de la NASA',
+        tagline: 'Machine Learning para encontrar exoplanetas en los datos de la NASA.',
         description:
-          'Sistema integral para identificar exoplanetas a partir de datos astronómicos abiertos de la NASA, combinando análisis estadístico, Machine Learning y despliegue reproducible.',
-        stack: ['Data Science', 'ML', 'API', 'Docker'],
+          'Plataforma web que estima si una señal astronómica corresponde a un exoplaneta. Hecha para el reto «A World Away» del NASA Space Apps Challenge 2025: el análisis exploratorio y el entrenamiento se hicieron en Jupyter con Pandas sobre los catálogos abiertos de las misiones Kepler, K2 y TESS, y el modelo final es un Gradient Boosting de Scikit-learn. Una API en FastAPI sirve las predicciones y una interfaz en JavaScript permite ingresar los parámetros del tránsito y ver el resultado.',
+        cta: 'Pruébalo en la web: carga uno de los ejemplos o ingresa los cuatro datos de un candidato y mira si el modelo lo clasifica como exoplaneta.',
+        stack: ['Python', 'Scikit-learn', 'FastAPI'],
       },
       en: {
         title: 'KeplerX',
-        tagline: 'Exoplanet detection with open NASA data',
+        tagline: 'Machine Learning to find exoplanets in NASA data.',
         description:
-          'End-to-end system that identifies exoplanets from open NASA astronomical data, combining statistical analysis, Machine Learning and reproducible deployment.',
-        stack: ['Data Science', 'ML', 'API', 'Docker'],
+          'Web platform that estimates whether an astronomical signal is an exoplanet. Built for the “A World Away” challenge of the NASA Space Apps Challenge 2025: exploratory analysis and training were done in Jupyter with Pandas on the open catalogs of the Kepler, K2 and TESS missions, and the final model is a Scikit-learn Gradient Boosting classifier. A FastAPI service serves the predictions and a JavaScript interface lets you enter the transit parameters and see the result.',
+        cta: 'Try it on the web: load one of the examples or enter the four values of a candidate and see whether the model classifies it as an exoplanet.',
+        stack: ['Python', 'Scikit-learn', 'FastAPI'],
       },
     },
   },
@@ -215,17 +270,19 @@ const projectBase: ProjectBase[] = [
     text: {
       es: {
         title: 'ViviEstu',
-        tagline: 'Plataforma para conectar estudiantes con arrendadores',
+        tagline: 'Vivienda universitaria segura, sin buscar a ciegas.',
         description:
-          'Plataforma Fullstack para conectar estudiantes con arrendadores, centralizando información y reforzando la seguridad en la búsqueda de vivienda.',
-        stack: ['Full Stack', 'Arquitectura'],
+          'Plataforma web que conecta a estudiantes universitarios con arrendadores de habitaciones y departamentos cerca de su centro de estudios. Los estudiantes filtran por ubicación, precio y servicios incluidos (luz, agua, internet), y los arrendadores publican y editan sus anuncios desde un perfil propio. El frontend está hecho en Angular con TypeScript y RxJS, y se apoya en una API REST en Spring Boot con autenticación JWT y datos en PostgreSQL.',
+        cta: 'Pruébalo en la web: explora los anuncios y filtra por ubicación, precio y servicios incluidos.',
+        stack: ['Angular', 'Spring Boot', 'PostgreSQL'],
       },
       en: {
         title: 'ViviEstu',
-        tagline: 'Platform connecting students with landlords',
+        tagline: 'Safe student housing, without searching blind.',
         description:
-          'Full Stack platform that connects students with landlords, centralizing information and improving safety in the housing search.',
-        stack: ['Full Stack', 'Architecture'],
+          'Web platform that connects university students with landlords offering rooms and apartments near their campus. Students filter by location, price and included utilities (electricity, water, internet), and landlords publish and edit their listings from their own profile. The frontend is built with Angular, TypeScript and RxJS, backed by a Spring Boot REST API with JWT authentication and PostgreSQL storage.',
+        cta: 'Try it on the web: browse the listings and filter by location, price and included utilities.',
+        stack: ['Angular', 'Spring Boot', 'PostgreSQL'],
       },
     },
   },
@@ -250,10 +307,11 @@ const projectBase: ProjectBase[] = [
     text: {
       es: {
         title: 'Karate Panamericano',
-        tagline: 'Torneo de karate por consola, con arte hecho de caracteres de bloque.',
+        tagline: 'Pelea por el podio de los Panamericanos, turno a turno, en la consola.',
         description:
-          'Juego de karate por consola en C++ con arte hecho de caracteres de bloque. Eliges un país entre diez y compites en un torneo de tres rondas, con golpes, patadas, defensa, resistencia, penalizaciones por salir del cuadrilátero y un podio final.',
-        stack: ['C++', 'WebAssembly', 'Emscripten', 'xterm.js'],
+          'Juego de pelea por turnos escrito en C++ y dibujado con caracteres de bloque y colores ANSI de 256 tonos. Eliges uno de diez países, tu karateka viste los colores de su bandera y avanzas de cuartos de final a la final. En cada turno atacas (puñete o patada, con distinto daño y empuje) o te defiendes, cuidando la resistencia: tres penalidades te descalifican y los jueces puntúan cada combate. Portado a WebAssembly con Emscripten para jugarse aquí mismo en una terminal xterm.js.',
+        cta: 'Juégalo aquí mismo en el navegador con el botón «Jugar», o clona el repositorio para compilar la versión original de consola en Windows.',
+        stack: ['C++'],
         controls: [
           'Menú y país: escribe el número y pulsa Enter.',
           'En combate: pulsa 1 o 2 (atacar o defenderse, puñete o patada).',
@@ -262,10 +320,11 @@ const projectBase: ProjectBase[] = [
       },
       en: {
         title: 'Karate Panamericano',
-        tagline: 'A console karate tournament with block-character pixel art.',
+        tagline: 'Fight for the Pan American podium, turn by turn, on the console.',
         description:
-          'A console karate game in C++ with block-character pixel art. You pick one of ten countries and fight a three-round tournament, with punches, kicks, defense, stamina, ring-out penalties and a final podium.',
-        stack: ['C++', 'WebAssembly', 'Emscripten', 'xterm.js'],
+          'Turn-based fighting game written in C++ and drawn with block characters and 256-color ANSI. You pick one of ten countries, your karateka wears its flag colors, and you advance from the quarterfinals to the final. Each turn you attack (punch or kick, with different damage and push) or defend while managing stamina: three penalties disqualify you and judges score every bout. Ported to WebAssembly with Emscripten so it can be played right here in an xterm.js terminal.',
+        cta: 'Play it right here in the browser with the “Play” button, or clone the repository to build the original Windows console version.',
+        stack: ['C++'],
         controls: [
           'Menu and country: type the number and press Enter.',
           'In a fight: press 1 or 2 (attack or defend, punch or kick).',
@@ -296,10 +355,11 @@ const projectBase: ProjectBase[] = [
     text: {
       es: {
         title: 'Ouite',
-        tagline: 'Juego de cartas por consola para dos jugadores.',
+        tagline: 'Duelo de cartas para dos jugadores en la misma pantalla.',
         description:
-          'Juego de cartas por consola en C++ para dos jugadores, con las cartas dibujadas con caracteres de bloque. Eliges entre 5 y 10 rondas: en cada una sale una carta al azar y suma un punto quien la tenga en su mano de 8 cartas y la elimine.',
-        stack: ['C++', 'WebAssembly', 'Emscripten', 'xterm.js'],
+          'Juego de cartas por rondas escrito en C++/CLI para la consola de Windows, con las cartas dibujadas carácter por carácter y animación al repartir. Cada jugador recibe 8 cartas; en cada ronda la computadora voltea una al azar y suma un punto quien tenga ese valor en su mano y lo descarte. Se eligen de 5 a 10 rondas y gana quien acumule más puntos. Portado a WebAssembly con Emscripten para jugarse en el navegador.',
+        cta: 'Juégalo aquí mismo en el navegador con el botón «Jugar», o clona el repositorio para compilar la versión original de consola en Windows.',
+        stack: ['C++'],
         controls: [
           'Menú: pulsa la letra de la opción (I, J, C o S).',
           'Rondas, nombres y carta a eliminar: escribe y pulsa Enter (0 para pasar).',
@@ -307,10 +367,11 @@ const projectBase: ProjectBase[] = [
       },
       en: {
         title: 'Ouite',
-        tagline: 'A two-player console card game.',
+        tagline: 'A two-player card duel on the same screen.',
         description:
-          'A two-player console card game in C++ with block-character card art. You pick 5 to 10 rounds: each round a random card is shown, and whoever holds it in their 8-card hand and discards it scores a point.',
-        stack: ['C++', 'WebAssembly', 'Emscripten', 'xterm.js'],
+          'Round-based card game written in C++/CLI for the Windows console, with cards drawn character by character and a dealing animation. Each player gets 8 cards; every round the computer flips a random one, and whoever holds that value and discards it scores a point. You choose 5 to 10 rounds and the highest score wins. Ported to WebAssembly with Emscripten to be played in the browser.',
+        cta: 'Play it right here in the browser with the “Play” button, or clone the repository to build the original Windows console version.',
+        stack: ['C++'],
         controls: [
           'Menu: press the option letter (I, J, C or S).',
           'Rounds, names and card to discard: type and press Enter (0 to pass).',
@@ -338,10 +399,11 @@ const projectBase: ProjectBase[] = [
     text: {
       es: {
         title: 'Misión Espacial',
-        tagline: 'Aterrizaje en Marte y recolección de muestras, por consola.',
+        tagline: 'Aterriza en Marte entre meteoritos y sal a recoger cristales.',
         description:
-          'Juego de consola en C++ ambientado en Marte: esquivas meteoritos para lograr un aterrizaje seguro y luego conduces un rover que recoge las muestras y las deja una por una en el depósito antes de volver a la nave. Se juega con las flechas, con modo automático y una simulación.',
-        stack: ['C++', 'WebAssembly', 'Emscripten', 'xterm.js'],
+          'Arcade de consola en C++ hecho en una game jam, con dos niveles. Primero desciendes 700 km hacia Marte esquivando meteoritos, con cinco vidas y un panel de altura y tiempo de llegada; luego conduces un rover por el terreno para recoger los cinco cristales y volver a la nave. Se juega con las flechas, tiene un modo automático y una simulación en la que la computadora juega sola. Portado a WebAssembly con Emscripten.',
+        cta: 'Juégalo aquí mismo en el navegador con el botón «Jugar» (o mira la simulación), o clona el repositorio para compilar la versión original de consola en Windows.',
+        stack: ['C++'],
         controls: [
           'Menú: escribe el número y pulsa Enter.',
           'Flechas para moverte; A activa o desactiva el modo automático.',
@@ -349,10 +411,11 @@ const projectBase: ProjectBase[] = [
       },
       en: {
         title: 'Space Mission',
-        tagline: 'A Mars landing and sample-collection mission on the console.',
+        tagline: 'Land on Mars through a meteor shower, then go collect crystals.',
         description:
-          'A console game in C++ set on Mars: you dodge meteorites to land safely, then drive a rover that collects the samples and drops them off one by one at the depot before returning to the ship. It is played with the arrow keys, with an automatic mode and a simulation.',
-        stack: ['C++', 'WebAssembly', 'Emscripten', 'xterm.js'],
+          'A two-level console arcade game in C++ made at a game jam. First you descend 700 km toward Mars dodging meteorites, with five lives and a panel showing altitude and arrival time; then you drive a rover across the terrain to collect five crystals and return to the ship. It is played with the arrow keys, with an automatic mode and a simulation where the computer plays by itself. Ported to WebAssembly with Emscripten.',
+        cta: 'Play it right here in the browser with the “Play” button (or watch the simulation), or clone the repository to build the original Windows console version.',
+        stack: ['C++'],
         controls: [
           'Menu: type the number and press Enter.',
           'Arrow keys to move; A toggles automatic mode.',
