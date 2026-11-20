@@ -83,8 +83,7 @@ export const profileEn: Profile = {
       {
         label: 'CV',
         value: 'Download CV',
-        // TODO: el CV disponible está en español; agregar uno en inglés.
-        href: asset('/cv/CV_David_Serrudo_ES_Investigacion.pdf'),
+        href: asset('/cv/CV_Serrudo.pdf'),
       },
     ],
   },
